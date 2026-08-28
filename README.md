@@ -5,6 +5,8 @@ covering 25 months of activity on a Brazilian e-commerce marketplace.
 
 **[Open the live report](https://app.powerbi.com/view?r=eyJrIjoiNGYzMTZjMDgtNWU1Mi00N2Y4LTlmODEtYzVlZGFmZTUyNDk4IiwidCI6ImZhYjhhYzI0LTA5ZmUtNGRjMS04N2ViLTE2MzNhNjZhOGFlOCIsImMiOjEwfQ%3D%3D&pageName=47dc20157e9f02ae959e)** and click through it yourself. No sign-in needed.
 
+Prefer to watch? There is a [short walkthrough](walkthrough.mp4) of the report in this repo.
+
 Two source files carrying 1,126,500 rows between them go in. A 583,250 row fact table comes out.
 
 The dashboard is the visible half. Underneath it sits a full pipeline: two source systems landing in
@@ -301,6 +303,9 @@ it, but the model, the DAX and the report layout are all inspectable.
 PostgreSQL 17 · Power Query (M) · DAX · Power BI Desktop and Service
 
 ## Credits
+
+Built during the EPAM Data Analytics Engineering training programme.
+
 
 Data derived from the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 on Kaggle, expanded across two synthetic source systems for the warehouse build.
