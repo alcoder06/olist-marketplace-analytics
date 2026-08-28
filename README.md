@@ -154,6 +154,92 @@ for a reason unrelated to delivery performance.
 
 A dashboard is an argument, not a container. Everything below was decided rather than defaulted.
 
+Three rules ran through the whole thing:
+
+- **Less is more.** If a visual isn't answering a question, it comes off the page.
+- **Math is the framework.** One spacing unit, every margin and gutter a multiple of it, so nothing
+  sits where it does because it felt about right.
+- **Space is hierarchy.** Equal gaps say two things belong together, and the biggest object on a page
+  is the question that page exists to answer.
+
+Above all three sits the thing they serve: the dashboard has to tell a story.
+
+### The story the pages tell
+
+Page order is a narrative rather than a menu.
+
+**Overview** asks whether the business is healthy. **Products and sellers** asks where the money is
+coming from and who is bringing it. **Delivery and satisfaction** asks whether the promises made to
+get that money are being kept.
+
+Outcome, then cause. Stop after the first page and you still have a complete answer at the level you
+asked for. Carry on and it gets progressively more specific, with the hidden drillthrough page at the
+bottom of the funnel for anyone who wants individual rows.
+
+The same logic runs inside a page. Revenue and freight sit side by side per category because a
+category can sell well and still lose money once shipping is taken out, and a chart showing only one
+of them hides that. Sellers are plotted against their rating rather than listed by revenue because
+volume changes what a bad score means: a 3.3 average on a seller doing a million reais is a different
+problem from the same number on a seller doing twenty thousand.
+
+Transitions matter as much as the pages. The header is identical everywhere, in the same position, so
+moving between pages does not feel like opening a different report. Drillthrough carries the reader's
+filters with it, so arriving on the detail page never resets what they had already narrowed down. A
+reset bookmark returns the whole page to a known state in one click, because a reader three slicers
+deep otherwise has no way back other than clearing each one and hoping.
+
+### Less is more
+
+Every feature in this report earns its place by answering a question. The things left out were left
+out on purpose:
+
+no gradients, no drop shadows, no decorative icons, no second accent colour, no chart type chosen
+for variety, no KPI that nobody asked for.
+
+Conditional formatting uses three fixed thresholds rather than a colour gradient. A gradient looks
+smoother and says only that darker is more; a rule says below 3 is a problem and 4 and above is
+healthy, which is something a manager can act on.
+
+Tufte's data-ink ratio is the underlying idea. Every mark that is not carrying information is
+competing with the marks that are. Restraint is not a style here, it is what keeps a page with eleven
+visuals on it readable.
+
+### Math is the framework
+
+There is one outer margin and one gap, used everywhere.
+
+That is the whole rule, and its value is not that the numbers are special. It is that nothing is
+decided twice. When every gutter is the same, edges line up on their own, and the eye reads
+neighbouring visuals as belonging together. That is the Gestalt principle of proximity doing the
+work: elements close to each other are perceived as a group, and a consistent gap is what makes the
+grouping legible instead of accidental.
+
+Eyeballing each gap produces a layout where nothing is quite wrong and nothing quite lines up. A
+single unit removes the judgement call entirely, which is the sense in which layout is arithmetic:
+not that particular measurements are correct, but that consistency is checkable and taste is not.
+
+### Space is hierarchy
+
+Size is read before anything else, and faster than reading. Colin Ware's work on preattentive
+processing is the usual reference: certain visual properties, size and position among them, are
+resolved by the visual system before conscious attention arrives. Whatever is biggest is therefore
+claiming to be most important, whether or not that was intended.
+
+So the largest object on each page is the page's actual question.
+
+On Overview that is the revenue trend, running nearly the full width. Growth is the first thing
+anyone asks about, so it gets the space and the top position, where Nielsen Norman Group's
+eye-tracking work on F-shaped reading puts the first fixation.
+
+Beneath it, four cards sit at equal size, because they are genuinely equal: none of revenue, net
+revenue, on-time rate or review score outranks the others, and making one larger would assert a
+priority that does not exist. Equal weight, equal width.
+
+Down on the Delivery page, the bottom row is deliberately unequal, roughly two thirds against one
+third. A 25-month time series needs horizontal room before it is legible at all; ten bars do not.
+Splitting that row evenly would have made the more informative visual harder to read in exchange for
+a tidier grid. The layout serves the reading, not the other way round.
+
 ### Push the work upstream
 
 The further back a calculation happens, the less the report has to do while somebody is looking at it.
@@ -173,84 +259,16 @@ measures cost time on every interaction, and a measure that scans a fact table f
 could have stored is paying that cost repeatedly for no reason.
 
 Power Query does real work before any of that. PostgreSQL exposes a navigation column for every
-foreign key it finds, and since the fact is split across roughly 28 monthly partitions that each carry their
-own keys, the date dimension arrived with 182 columns against its real 14. Stripping those, the ETL
-lineage columns and the `-1` default members brought the whole model down to 55 columns across seven
-tables. Nothing loads that no visual reads.
+foreign key it finds, and since the fact is split across roughly 28 monthly partitions that each
+carry their own keys, the date dimension arrived with 182 columns against its real 14. Stripping
+those, the ETL lineage columns and the `-1` default members brought the whole model down to 55
+columns across seven tables. Nothing loads that no visual reads.
 
 Two model decisions did most of the work for responsiveness. Filters are single-direction everywhere,
 so the engine never has to resolve an ambiguous path. And the highest-cardinality column in the
 warehouse, a 500-character review comment that is close to unique on every one of 117,403 rows, was
 dropped at load: columnar compression works on distinct value counts, so free text is the most
 expensive thing you can carry and no visual here reads it.
-
-### Hierarchy: size carries the argument
-
-Size is read before anything else, and faster than reading. Colin Ware's work on preattentive
-processing is the usual reference for this: certain visual properties, size and position among them,
-are resolved by the visual system before conscious attention arrives. Whatever is biggest is
-therefore claiming to be most important, whether or not that was intended.
-
-So the largest object on each page is the page's actual question.
-
-On Overview that is the revenue trend, running nearly the full width. Growth is the first thing
-anyone asks about, so it gets the space and the top position, where Nielsen Norman Group's
-eye-tracking work on F-shaped reading puts the first fixation.
-
-Beneath it, four cards sit at equal size, because they are genuinely equal: none of revenue, net
-revenue, on-time rate or review score outranks the others, and making one larger would assert a
-priority that does not exist. Equal weight, equal width.
-
-Down on the Delivery page, the bottom row is deliberately unequal, roughly two thirds against one third. A
-25-month time series needs horizontal room before it is legible at all; ten bars do not. Splitting
-that row evenly would have made the more informative visual harder to read in exchange for a tidier
-grid. The layout serves the reading, not the other way round.
-
-### Space is a system, not a series of decisions
-
-There is one outer margin and one gap, used everywhere.
-
-That is the whole rule, and its value is not that the numbers are special. It is that nothing is
-decided twice. When every gutter is the same, edges line up on their own, and the eye reads
-neighbouring visuals as belonging together. That is the Gestalt principle of proximity doing the
-work: elements close to each other are perceived as a group, and a consistent gap is what makes the
-grouping legible instead of accidental.
-
-Eyeballing each gap produces a layout where nothing is quite wrong and nothing quite lines up. A
-single unit removes the judgement call entirely, which is the sense in which layout is arithmetic:
-not that particular measurements are correct, but that consistency is checkable and taste is not.
-
-### Less is more
-
-Every feature in this report earns its place by answering a question. The things left out were left
-out on purpose:
-
-no gradients, no drop shadows, no decorative icons, no second accent colour, no chart type chosen
-for variety, no KPI that nobody asked for.
-
-Conditional formatting uses three fixed thresholds rather than a colour gradient. A gradient looks
-smoother and says only that darker is more; a rule says below 3 is a problem and 4 and above is
-healthy, which is something a manager can act on.
-
-Tufte's data-ink ratio is the underlying idea. Every mark that is not carrying information is
-competing with the marks that are. Restraint is not a style here, it is what keeps a page with eleven
-visuals on it readable.
-
-### How the pages tell a story
-
-Page order is a narrative rather than a menu.
-
-**Overview** asks whether the business is healthy. **Products and sellers** asks where the money is
-coming from and who is bringing it. **Delivery and satisfaction** asks whether the promises made to
-get that money are being kept.
-
-That sequence moves from outcome to cause. Stop after page one and you still have a complete answer
-at the level you asked for; one who continues gets progressively more specific, and the
-drillthrough page underneath sits at the bottom of that funnel for anyone who wants the individual
-rows.
-
-Hierarchy and space are what make that order legible without instructions. Size names the question, position sets the reading order, and consistent gaps say which things belong
-together. A reader should be able to work out what a page is about before reading a single label.
 
 ### What this draws on
 
