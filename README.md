@@ -241,11 +241,11 @@ together. A reader should be able to work out what a page is about before readin
 
 ### What this draws on
 
-- Edward Tufte, *The Visual Display of Quantitative Information* (1983) — data-ink ratio and the case for removing non-informative marks
-- Colin Ware, *Information Visualization: Perception for Design* — preattentive attributes, why size and position are read before labels
-- Stephen Few, *Information Dashboard Design* (2006) — dashboards as single-screen monitoring rather than decoration
-- Max Wertheimer and the Gestalt school (1923) — proximity and common region, why consistent spacing reads as grouping
-- Nielsen Norman Group, *F-Shaped Pattern for Reading Web Content* (2006) — where attention lands first on a dense page
+- Edward Tufte, *The Visual Display of Quantitative Information* (1983). Data-ink ratio and the case for removing non-informative marks
+- Colin Ware, *Information Visualization: Perception for Design*. Preattentive attributes, why size and position are read before labels
+- Stephen Few, *Information Dashboard Design* (2006). Dashboards as single-screen monitoring rather than decoration
+- Max Wertheimer and the Gestalt school (1923). Proximity and common region, why consistent spacing reads as grouping
+- Nielsen Norman Group, *F-Shaped Pattern for Reading Web Content* (2006). Where attention lands first on a dense page
 
 ---
 
