@@ -3,7 +3,9 @@
 A Power BI report built on a PostgreSQL data warehouse I designed, modelled and loaded myself,
 covering 25 months of activity on a Brazilian e-commerce marketplace.
 
-The dashboard is the visible half. Underneath it is a full pipeline: two source systems landing in
+Two source files carrying 1,126,500 rows between them go in. A 583,250 row fact table comes out.
+
+The dashboard is the visible half. Underneath it sits a full pipeline: two source systems landing in
 a staging area, cleansed into a 3NF core, published as a star schema, and only then read by Power BI.
 
 > **Portfolio exercise.** Built on the public Olist Brazilian e-commerce dataset from Kaggle.
@@ -24,11 +26,12 @@ dimensional layer is exposed to a reporting tool.
 
 | | |
 |---|---|
+| Source records | 1,126,500 across two systems |
 | Fact rows | 583,250 at order-item grain |
 | Period | 18 June 2024 to 25 July 2026 |
 | Customers | 98,670, slowly changing type 2 |
 | Sellers | 3,096 |
-| Products | 32,952 across 71 categories |
+| Products | 32,952 |
 | Reviews | 117,403 |
 | Fact partitioning | range, one partition per month |
 | ETL | stored procedures, one master procedure runs the chain in dependency order |
@@ -52,6 +55,7 @@ resolve, and it is also why the Power BI load has to filter those rows back out 
 Look at `FCT_ORDER_ITEMS_DD`. It carries **six foreign keys into the same date dimension**: purchase,
 approval, shipping limit, carrier handover, delivery, and the delivery date originally estimated.
 
+Eleven relationships come out of this in Power BI, six of them into that one date dimension.
 That single design choice drives most of the DAX further down this page.
 
 Data flow diagrams for each stage, in Gane/Sarson notation, are in
@@ -132,11 +136,11 @@ net revenue sits next to gross on the overview page rather than being left to be
 3.59 average review, against 92.8 per cent and 3.88 nationally. A revenue-only report would show a
 small, unremarkable state.
 
-**Reviews are J-shaped.** Fives dominate, ones are the second largest group, and the middle is thin.
+**Reviews are J-shaped.** The warehouse holds 117,403 reviews against 583,250 order items, so most items carry none. Among those that do, fives dominate, ones are the second largest group, and the middle is thin.
 People who are delighted and people who are angry both write reviews; everyone in between mostly does
 not.
 
-**About 12,000 order items never arrived at all.** They are excluded from the on-time rate, because
+**Roughly 12,000 of the 583,250 order items never arrived at all.** They are excluded from the on-time rate, because
 an order still in transit is neither on time nor late, and counting it would drag the percentage down
 for a reason unrelated to delivery performance.
 
@@ -164,6 +168,12 @@ Getting that split wrong is the usual reason a report feels sluggish. Columns co
 measures cost time on every interaction, and a measure that scans a fact table for something a column
 could have stored is paying that cost repeatedly for no reason.
 
+Power Query does real work before any of that. PostgreSQL exposes a navigation column for every
+foreign key it finds, and since the fact is split across roughly 28 monthly partitions that each carry their
+own keys, the date dimension arrived with 182 columns against its real 14. Stripping those, the ETL
+lineage columns and the `-1` default members brought the whole model down to 55 columns across seven
+tables. Nothing loads that no visual reads.
+
 Two model decisions did most of the work for responsiveness. Filters are single-direction everywhere,
 so the engine never has to resolve an ambiguous path. And the highest-cardinality column in the
 warehouse, a 500-character review comment that is close to unique on every one of 117,403 rows, was
@@ -183,11 +193,11 @@ On Overview that is the revenue trend, running nearly the full width. Growth is 
 anyone asks about, so it gets the space and the top position, where Nielsen Norman Group's
 eye-tracking work on F-shaped reading puts the first fixation.
 
-The four cards sit beneath it at equal size, because they are genuinely equal: none of revenue, net
+Beneath it, four cards sit at equal size, because they are genuinely equal: none of revenue, net
 revenue, on-time rate or review score outranks the others, and making one larger would assert a
 priority that does not exist. Equal weight, equal width.
 
-The Delivery page bottom row is deliberately unequal, roughly two thirds against one third. A
+Down on the Delivery page, the bottom row is deliberately unequal, roughly two thirds against one third. A
 25-month time series needs horizontal room before it is legible at all; ten bars do not. Splitting
 that row evenly would have made the more informative visual harder to read in exchange for a tidier
 grid. The layout serves the reading, not the other way round.
@@ -224,19 +234,18 @@ visuals on it readable.
 
 ### How the pages tell a story
 
-The three pages are ordered as a narrative rather than as a menu.
+Page order is a narrative rather than a menu.
 
 **Overview** asks whether the business is healthy. **Products and sellers** asks where the money is
 coming from and who is bringing it. **Delivery and satisfaction** asks whether the promises made to
 get that money are being kept.
 
-That sequence moves from outcome to cause. A reader who stops after page one still has a complete
-answer at the level they asked for; one who continues gets progressively more specific, and the
+That sequence moves from outcome to cause. Stop after page one and you still have a complete answer
+at the level you asked for; one who continues gets progressively more specific, and the
 drillthrough page underneath sits at the bottom of that funnel for anyone who wants the individual
 rows.
 
-Hierarchy and space are what make that order legible without instructions. The largest object names
-the question, the position sets the reading order, and the consistent gaps say which things belong
+Hierarchy and space are what make that order legible without instructions. Size names the question, position sets the reading order, and consistent gaps say which things belong
 together. A reader should be able to work out what a page is about before reading a single label.
 
 ### What this draws on
