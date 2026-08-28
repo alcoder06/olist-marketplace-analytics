@@ -1,0 +1,6 @@
+# local working files
+_extract/
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
