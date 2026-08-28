@@ -142,6 +142,113 @@ for a reason unrelated to delivery performance.
 
 ---
 
+## Design rationale
+
+A dashboard is an argument, not a container. Everything below was decided rather than defaulted.
+
+### Push the work upstream
+
+The further back a calculation happens, the less the report has to do while somebody is looking at it.
+
+The date dimension is generated in the warehouse with every attribute already present: day name,
+week, month name and number, quarter, year, weekend flag. Power BI never derives a month from a
+date at query time, because the column already exists. The star is pre-joined, the keys are narrow
+integers, and the `-1` handling means no join returns an unexpected blank.
+
+Inside the model the same logic decides between a calculated column and a measure. A value that is
+fixed for a row is a column: `Delivery Days` and `Delivery Status` are computed once at refresh and
+compressed alongside the rest of the table. A value that depends on what the reader has selected has
+to be a measure, because it cannot be known until the click happens.
+
+Getting that split wrong is the usual reason a report feels sluggish. Columns cost memory once;
+measures cost time on every interaction, and a measure that scans a fact table for something a column
+could have stored is paying that cost repeatedly for no reason.
+
+Two model decisions did most of the work for responsiveness. Filters are single-direction everywhere,
+so the engine never has to resolve an ambiguous path. And the highest-cardinality column in the
+warehouse, a 500-character review comment that is close to unique on every one of 117,403 rows, was
+dropped at load: columnar compression works on distinct value counts, so free text is the most
+expensive thing you can carry and no visual here reads it.
+
+### Hierarchy: size carries the argument
+
+Size is read before anything else, and faster than reading. Colin Ware's work on preattentive
+processing is the usual reference for this: certain visual properties, size and position among them,
+are resolved by the visual system before conscious attention arrives. Whatever is biggest is
+therefore claiming to be most important, whether or not that was intended.
+
+So the largest object on each page is the page's actual question.
+
+On Overview that is the revenue trend, running nearly the full width. Growth is the first thing
+anyone asks about, so it gets the space and the top position, where Nielsen Norman Group's
+eye-tracking work on F-shaped reading puts the first fixation.
+
+The four cards sit beneath it at equal size, because they are genuinely equal: none of revenue, net
+revenue, on-time rate or review score outranks the others, and making one larger would assert a
+priority that does not exist. Equal weight, equal width.
+
+The Delivery page bottom row is deliberately unequal, roughly two thirds against one third. A
+25-month time series needs horizontal room before it is legible at all; ten bars do not. Splitting
+that row evenly would have made the more informative visual harder to read in exchange for a tidier
+grid. The layout serves the reading, not the other way round.
+
+### Space is a system, not a series of decisions
+
+There is one outer margin and one gap, used everywhere.
+
+That is the whole rule, and its value is not that the numbers are special. It is that nothing is
+decided twice. When every gutter is the same, edges line up on their own, and the eye reads
+neighbouring visuals as belonging together. That is the Gestalt principle of proximity doing the
+work: elements close to each other are perceived as a group, and a consistent gap is what makes the
+grouping legible instead of accidental.
+
+Eyeballing each gap produces a layout where nothing is quite wrong and nothing quite lines up. A
+single unit removes the judgement call entirely, which is the sense in which layout is arithmetic:
+not that particular measurements are correct, but that consistency is checkable and taste is not.
+
+### Less is more
+
+Every feature in this report earns its place by answering a question. The things left out were left
+out on purpose:
+
+no gradients, no drop shadows, no decorative icons, no second accent colour, no chart type chosen
+for variety, no KPI that nobody asked for.
+
+Conditional formatting uses three fixed thresholds rather than a colour gradient. A gradient looks
+smoother and says only that darker is more; a rule says below 3 is a problem and 4 and above is
+healthy, which is something a manager can act on.
+
+Tufte's data-ink ratio is the underlying idea. Every mark that is not carrying information is
+competing with the marks that are. Restraint is not a style here, it is what keeps a page with eleven
+visuals on it readable.
+
+### How the pages tell a story
+
+The three pages are ordered as a narrative rather than as a menu.
+
+**Overview** asks whether the business is healthy. **Products and sellers** asks where the money is
+coming from and who is bringing it. **Delivery and satisfaction** asks whether the promises made to
+get that money are being kept.
+
+That sequence moves from outcome to cause. A reader who stops after page one still has a complete
+answer at the level they asked for; one who continues gets progressively more specific, and the
+drillthrough page underneath sits at the bottom of that funnel for anyone who wants the individual
+rows.
+
+Hierarchy and space are what make that order legible without instructions. The largest object names
+the question, the position sets the reading order, and the consistent gaps say which things belong
+together. A reader should be able to work out what a page is about before reading a single label.
+
+### What this draws on
+
+- Edward Tufte, *The Visual Display of Quantitative Information* (1983) — data-ink ratio and the case for removing non-informative marks
+- Colin Ware, *Information Visualization: Perception for Design* — preattentive attributes, why size and position are read before labels
+- Stephen Few, *Information Dashboard Design* (2006) — dashboards as single-screen monitoring rather than decoration
+- Max Wertheimer and the Gestalt school (1923) — proximity and common region, why consistent spacing reads as grouping
+- Nielsen Norman Group, *F-Shaped Pattern for Reading Web Content* (2006) — where attention lands first on a dense page
+
+---
+
 ## Techniques used
 
 | | |
