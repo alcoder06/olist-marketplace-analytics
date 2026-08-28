@@ -156,7 +156,8 @@ A dashboard is an argument, not a container. Everything below was decided rather
 
 Three rules ran through the whole thing:
 
-- **Less is more.** If a visual isn't answering a question, it comes off the page.
+- **Less is more.** Every extra visual and drillthrough is one more thing to scan and one more
+  query to run. Handing the viewer everything communicates nothing.
 - **Math is the framework.** One spacing unit, every margin and gutter a multiple of it, so nothing
   sits where it does because it felt about right.
 - **Space is hierarchy.** Equal gaps say two things belong together, and the biggest object on a page
@@ -203,6 +204,17 @@ healthy, which is something a manager can act on.
 Tufte's data-ink ratio is the underlying idea. Every mark that is not carrying information is
 competing with the marks that are. Restraint is not a style here, it is what keeps a page with eleven
 visuals on it readable.
+
+Restraint is also a performance decision, not only a visual one. Every visual on a page is a query,
+every drillthrough path is another one waiting to run, and a page carrying twenty of them responds
+more slowly than a page carrying eleven whether or not the reader looks at all twenty. The cost lands
+twice: once in how long the page takes to answer, and once in how long the reader takes to find what
+they came for.
+
+So it is a trade-off rather than a rule. Adding one more feature is always defensible on its own,
+because any single visual can be justified in isolation. The real question is what it costs the
+eleven already there. Handing a viewer everything is not the same as communicating with them, and a
+dashboard built to answer every possible question tends to answer no particular one.
 
 ### Math is the framework
 
