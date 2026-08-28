@@ -3,6 +3,8 @@
 A Power BI report built on a PostgreSQL data warehouse I designed, modelled and loaded myself,
 covering 25 months of activity on a Brazilian e-commerce marketplace.
 
+**[Open the live report](https://app.powerbi.com/view?r=eyJrIjoiNGYzMTZjMDgtNWU1Mi00N2Y4LTlmODEtYzVlZGFmZTUyNDk4IiwidCI6ImZhYjhhYzI0LTA5ZmUtNGRjMS04N2ViLTE2MzNhNjZhOGFlOCIsImMiOjEwfQ%3D%3D&pageName=47dc20157e9f02ae959e)** and click through it yourself. No sign-in needed.
+
 Two source files carrying 1,126,500 rows between them go in. A 583,250 row fact table comes out.
 
 The dashboard is the visible half. Underneath it sits a full pipeline: two source systems landing in
